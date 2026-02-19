@@ -4,16 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Admin Panel</title>
+    <title>Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
-        /* CSS Stilleri (Daha önce oluşturduğumuz modern tasarımın aynısı) */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif
         }
 
         :root {
@@ -21,25 +19,27 @@
             --card: rgba(255, 255, 255, 0.04);
             --card-h: rgba(255, 255, 255, 0.07);
             --border: rgba(255, 255, 255, 0.08);
-            --text: #fff;
+            --text: #ffffff;
             --text2: rgba(255, 255, 255, 0.55);
             --text3: rgba(255, 255, 255, 0.3);
             --accent: #6366f1;
-            --al: #818cf8;
-            --ag: rgba(99, 102, 241, 0.25);
+            --accent-l: #818cf8;
+            --accent-g: rgba(99, 102, 241, 0.25);
             --success: #22c55e;
             --danger: #f43f5e;
-            --warn: #f59e0b;
-            --sw: 260px
+            --warning: #f59e0b;
+            --sw: 260px;
         }
 
         body {
+            font-family: 'Inter', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden
+            overflow-x: hidden;
         }
 
+        /* ── Sidebar ── */
         .sidebar {
             position: fixed;
             top: 0;
@@ -51,15 +51,15 @@
             backdrop-filter: blur(20px);
             z-index: 100;
             display: flex;
-            flex-direction: column
+            flex-direction: column;
         }
 
         .brand {
-            padding: 22px 18px;
+            padding: 24px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 12px
+            gap: 12px;
         }
 
         .brand-icon {
@@ -70,12 +70,34 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand h2 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand span {
+            font-size: 11px;
+            color: var(--text3);
+            display: block;
+            margin-top: 2px;
         }
 
         .sidebar nav {
             flex: 1;
-            padding: 10px
+            padding: 12px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 10px 12px 6px;
         }
 
         .sidebar nav a {
@@ -87,34 +109,115 @@
             color: var(--text2);
             text-decoration: none;
             font-size: 14px;
-            transition: 0.2s;
-            margin-bottom: 2px
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 2px;
         }
 
-        .sidebar nav a:hover,
+        .sidebar nav a:hover {
+            background: var(--card-h);
+            color: var(--text);
+        }
+
         .sidebar nav a.active {
-            background: var(--ag);
-            color: var(--al)
+            background: var(--accent-g);
+            color: var(--accent-l);
         }
 
+        .sidebar-footer {
+            padding: 14px 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            border-radius: 10px;
+            color: var(--danger);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(244, 63, 94, 0.15);
+        }
+
+        /* ── Main ── */
         .main {
             margin-left: var(--sw);
-            padding: 30px 38px
+            padding: 32px 40px;
+            min-height: 100vh;
         }
 
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .main-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .header-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.5
+            }
+        }
+
+        /* ── Stats ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 26px
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative
+            border-radius: 18px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
         }
 
         .stat-card::before {
@@ -124,158 +227,833 @@
             left: 0;
             right: 0;
             height: 3px;
-            border-radius: 16px 16px 0 0;
-            background: var(--accent)
+            border-radius: 18px 18px 0 0;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #22c55e, #10b981);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #f59e0b, #f97316);
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #ec4899, #f43f5e);
+        }
+
+        .stat-card:hover {
+            background: var(--card-h);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 22px;
+            margin-bottom: 12px;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
-            margin-bottom: 3px
+            letter-spacing: -1px;
+            margin-bottom: 4px;
         }
 
         .stat-label {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .stat-change {
             font-size: 11px;
-            color: var(--text2)
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .stat-change.up {
+            color: var(--success);
+        }
+
+        .stat-change.down {
+            color: var(--danger);
+        }
+
+        .stat-change.same {
+            color: var(--text3);
+        }
+
+        /* ── Cards ── */
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 28px;
         }
 
         .card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 22px;
-            margin-bottom: 20px
+            border-radius: 18px;
+            padding: 24px;
+            transition: border-color 0.3s;
         }
 
-        .btn-primary {
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-full {
+            grid-column: 1/-1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .badge-purple {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-l);
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        /* ── Inputs ── */
+        .live-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+        }
+
+        .preview-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text3);
+            margin-bottom: 8px;
+        }
+
+        .preview-url {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-l);
+            word-break: break-all;
+        }
+
+        .url-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .url-input-group label {
+            font-size: 13px;
+            color: var(--text2);
+            white-space: nowrap;
+        }
+
+        .url-input-group input[type="number"] {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+            -moz-appearance: textfield;
+        }
+
+        .number-controls button {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .number-controls button:hover {
+            background: var(--accent-g);
+            border-color: var(--accent);
+            color: var(--accent-l);
+        }
+
+        .ref-input-group {
+            margin-bottom: 14px;
+        }
+
+        .ref-input-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text2);
+            font-weight: 500;
+            margin-bottom: 7px;
+        }
+
+        .ref-input-group input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .ref-input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-g);
+        }
+
+        /* ── Buttons ── */
+        .btn-save {
+            width: 100%;
+            padding: 13px;
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #fff;
+            font-size: 14px;
             font-weight: 600;
-            cursor: pointer
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 13px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ── Btag List ── */
+        .log-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .log-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
 
         .btag-item {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid var(--border)
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            gap: 10px;
+            transition: background 0.2s;
         }
 
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: var(--bg);
-            z-index: 1000;
+        .btag-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .btag-inner {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .btag-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .btag-url-text {
+            font-size: 11px;
+            color: var(--text3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .btag-actions {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            transition: all 0.2s;
         }
 
-        /* Charts */
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-icon.danger:hover {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--danger);
+        }
+
+        /* ── Analytics ── */
+        .chart-wrap {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 10px;
+        }
+
         .bar-chart {
             display: flex;
             align-items: flex-end;
-            gap: 5px;
-            height: 120px;
-            border-bottom: 1px solid var(--border)
+            gap: 6px;
+            height: 140px;
+            padding-bottom: 24px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            gap: 4px;
+            height: 100%;
         }
 
         .bar {
-            flex: 1;
-            background: var(--accent);
-            border-radius: 4px 4px 0 0;
-            min-height: 2px;
-            transition: 0.5s
+            width: 100%;
+            border-radius: 5px 5px 0 0;
+            min-height: 4px;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            filter: brightness(1.2);
+        }
+
+        .bar-val {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .bar-lbl {
+            position: absolute;
+            bottom: -20px;
+            font-size: 9px;
+            color: var(--text3);
+            white-space: nowrap;
+        }
+
+        .compare-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+
+        .compare-side {
+            text-align: center;
+        }
+
+        .compare-num {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .compare-lbl {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 4px;
+        }
+
+        .compare-arrow {
+            font-size: 20px;
+        }
+
+        .pct-chip {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .pct-chip.up {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .pct-chip.down {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--danger);
+        }
+
+        .pct-chip.same {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text3);
+        }
+
+        .top-btag-card {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .top-btag-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .top-btag-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-l);
+        }
+
+        .top-btag-sub {
+            font-size: 12px;
+            color: var(--text3);
+            margin-top: 4px;
+        }
+
+        .top-btag-count {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--warning);
+            margin-top: 14px;
+        }
+
+        /* ── Info Box & Loader ── */
+        .info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+        }
+
+        .info-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .info-text strong {
+            display: block;
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .info-text p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.5;
+        }
+
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .toast {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            background: var(--success);
-            border-radius: 10px;
-            display: none;
-            z-index: 2000
+            bottom: 28px;
+            right: 28px;
+            padding: 14px 20px;
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            z-index: 1000;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: var(--success);
+        }
+
+        .toast.error {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--danger);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width:1024px) {
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width:768px) {
+            .main {
+                margin-left: 0;
+                padding: 20px 14px;
+            }
+
+            .sidebar {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div id="loading" class="loading-overlay">🚀 Bağlanılıyor...</div>
+    <!-- Loading -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p style="color:rgba(255,255,255,0.5);font-size:12px">Veriler Buluttan Yükleniyor...</p>
+    </div>
 
+    <!-- Sidebar -->
     <aside class="sidebar">
         <div class="brand">
             <div class="brand-icon">⚡</div>
             <div>
-                <h2>Panel</h2><span>Cloud Analytics</span>
+                <h2>Panel</h2>
+                <span>Yönlendirme Yönetimi</span>
             </div>
         </div>
         <nav>
-            <a href="#" class="active" onclick="switchSec('dashboard')">📊 Dashboard</a>
-            <a href="#" onclick="switchSec('btag')">🏷️ Btag Yönetimi</a>
-            <a href="#" onclick="switchSec('analiz')">📈 Detaylı Analiz</a>
+            <div class="nav-label">Menü</div>
+            <a href="#" class="active" data-section="dashboard"><span class="nav-icon">📊</span> Dashboard</a>
+            <a href="#" data-section="btag"><span class="nav-icon">🏷️</span> Btag Yönetimi</a>
+            <a href="#" data-section="analiz"><span class="nav-icon">📈</span> Btag Analiz</a>
         </nav>
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="btnLogout"><span>🚪</span> Çıkış Yap</button>
+        </div>
     </aside>
 
+    <!-- Main -->
     <div class="main">
+        <div class="main-header fade-in">
+            <h1 id="pageTitle">📊 Dashboard</h1>
+            <div class="header-badge">
+                <div class="dot"></div><span>Oturum Aktif (Firebase)</span>
+            </div>
+        </div>
+
+        <!-- ══ DASHBOARD ══ -->
         <div id="sec-dashboard">
-            <div class="stats-grid" id="dash-stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="val-num">481</div>
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🔢</div>
+                    <div class="stat-value" id="statNum">—</div>
                     <div class="stat-label">Site Numarası</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="val-btags">0</div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🏷️</div>
+                    <div class="stat-value" id="statBtag">—</div>
                     <div class="stat-label">Kayıtlı Btag</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="val-today">0</div>
-                    <div class="stat-label">Bugünkü Giriş</div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="statToday">—</div>
+                    <div class="stat-label">Bugünkü Giriş <div class="stat-change" id="statChg"></div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="val-all">0</div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="statAll">—</div>
                     <div class="stat-label">Toplam Giriş</div>
                 </div>
             </div>
-            <div class="card">
-                <h3>🔗 URL Ayarları</h3>
-                <div style="margin:15px 0">
-                    <input type="number" id="inp-num" value="481"
-                        style="width:100px;padding:10px;background:var(--card);border:1px solid var(--border);color:#fff">
-                    <input type="text" id="inp-ref" value="MuzQ"
-                        style="padding:10px;background:var(--card);border:1px solid var(--border);color:#fff">
+
+            <div class="section-grid">
+                <!-- URL Card -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🔗 URL Ayarları</h3>
+                        <span class="badge badge-purple">Aktif</span>
+                    </div>
+                    <div class="live-preview">
+                        <div class="preview-label">Canlı Önizleme</div>
+                        <div class="preview-url" id="livePreview">https://www.betsobet481.com/tr/</div>
+                    </div>
+                    <div class="url-input-group">
+                        <label>Site No:</label>
+                        <input type="number" id="siteNumber" value="481" min="1" max="9999">
+                        <div class="number-controls" style="display:flex;gap:5px">
+                            <button id="btnMinus">−</button>
+                            <button id="btnPlus">+</button>
+                        </div>
+                    </div>
+                    <div class="ref-input-group">
+                        <label>Default Affiliate Ref Kodu</label>
+                        <input type="text" id="refCode" value="MuzQ" placeholder="Örn: MuzQ">
+                    </div>
+                    <button class="btn-save" id="btnSave"><span>💾</span> Kaydet & Uygula</button>
                 </div>
-                <button class="btn-primary" onclick="saveConfig()">💾 Cloud'a Kaydet</button>
+
+                <!-- Quick Actions -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>⚡ Hızlı İşlemler</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr;gap:10px;">
+                        <button class="btn-secondary" id="btnTestUrl"><span>🌐</span> URL'yi Test Et</button>
+                        <button class="btn-secondary" id="btnCopyUrl"><span>📋</span> URL Kopyala</button>
+                        <button class="btn-secondary" id="btnIncrementSave"><span>⏫</span> +1 Artır & Kaydet</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="sec-btag" style="display:none">
-            <div class="card">
-                <h3>🏷️ Yeni Btag</h3>
-                <input type="text" id="inp-btag" placeholder="Btag Adı"
-                    style="width:100%;padding:10px;margin:10px 0;background:var(--card);border:1px solid var(--border);color:#fff">
-                <button class="btn-primary" onclick="addBtag()">➕ Ekle</button>
+        <!-- ══ BTAG ══ -->
+        <div id="sec-btag" style="display:none;">
+            <div class="section-grid">
+                <!-- Create Btag -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🏷️ Yeni Btag Oluştur</h3>
+                        <span class="badge badge-purple" id="btagTotalBadge">0 btag</span>
+                    </div>
+                    <div class="live-preview">
+                        <div class="preview-label">Oluşturulacak URL</div>
+                        <div class="preview-url" id="btagPreviewUrl">domain.com/BtagAdi</div>
+                    </div>
+                    <div class="ref-input-group">
+                        <label>Btag / Üye Adı</label>
+                        <input type="text" id="btagInput" placeholder="Örn: Tugce, Ali123, Partner1">
+                    </div>
+                    <button class="btn-save" id="btnAddBtag" style="margin-top:6px;"><span>➕</span> Btag
+                        Oluştur</button>
+                </div>
+
+                <!-- Btag List -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>📋 Btag Listesi</h3>
+                        <span class="badge badge-green" id="btagCountBadge">0 adet</span>
+                    </div>
+                    <div class="log-list" id="btagList">
+                        <div class="empty-state">
+                            <p>Henüz btag oluşturulmadı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How it works -->
+                <div class="card card-full fade-in">
+                    <div class="card-header">
+                        <h3>ℹ️ Nasıl Çalışır?</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;">
+                        <div class="info-box">
+                            <div class="info-icon">1️⃣</div>
+                            <div class="info-text"><strong>Btag Oluştur</strong>
+                                <p>Üye için btag adı girin.</p>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-icon">2️⃣</div>
+                            <div class="info-text"><strong>URL Paylaş</strong>
+                                <p>Ziyaretçileri domain.com/isim adresine yönlendirin.</p>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-icon">3️⃣</div>
+                            <div class="info-text"><strong>Otomatik Kayıt</strong>
+                                <p>Her şey anında Firebase bulutuna işlenir.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card" id="btag-list"></div>
         </div>
 
-        <div id="sec-analiz" style="display:none">
-            <div class="card">
-                <h3>📈 Detaylı Grafik</h3>
-                <div class="bar-chart" id="chart"></div>
+        <!-- ══ ANALIZ ══ -->
+        <div id="sec-analiz" style="display:none;">
+            <!-- Compare -->
+            <div class="compare-box fade-in">
+                <div class="compare-side">
+                    <div class="compare-num" id="cmpYest" style="color:var(--text2)">—</div>
+                    <div class="compare-lbl">Dün</div>
+                </div>
+                <div style="text-align:center">
+                    <div class="compare-vs">Karşılaştırma</div>
+                    <div class="compare-arrow">⚡</div>
+                    <div class="pct-chip same" id="cmpChip">—</div>
+                </div>
+                <div class="compare-side">
+                    <div class="compare-num" id="cmpToday" style="color:var(--success)">—</div>
+                    <div class="compare-lbl">Bugün</div>
+                </div>
+            </div>
+
+            <div class="section-grid">
+                <!-- Chart -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>📊 Günlük Giriş Grafiği (Son 7 Gün)</h3>
+                    </div>
+                    <div class="chart-wrap">
+                        <div class="bar-chart" id="barChart"></div>
+                    </div>
+                </div>
+
+                <!-- Top Btag -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🏆 En Popüler Btag</h3>
+                    </div>
+                    <div class="top-btag-card">
+                        <div class="top-btag-icon">🏷️</div>
+                        <div class="top-btag-name" id="topName">—</div>
+                        <div class="top-btag-sub">tüm zamanların lideri</div>
+                        <div class="top-btag-count" id="topCount">0</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Toast -->
+    <div class="toast" id="toast"><span id="toastText">İşlem başarılı</span></div>
 
-    <!-- Firebase SDK -->
+    <!-- FIREBASE MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -289,90 +1067,259 @@
             appId: "1:331005300450:web:7e79fa70d7aa773fce58bb",
             measurementId: "G-L8GMV4BECB"
         };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let btags = [];
-        let visits = [];
+        // STATE
+        let CFG = { siteNumber: '481', defaultRef: 'MuzQ' };
+        let BTAGS = [];
+        let VISITS = [];
 
+        // INIT
         async function init() {
-            const cfg = await getDoc(doc(db, "settings", "config"));
-            if (cfg.exists()) {
-                document.getElementById('inp-num').value = cfg.data().siteNumber;
-                document.getElementById('inp-ref').value = cfg.data().defaultRef;
-                document.getElementById('val-num').textContent = cfg.data().siteNumber;
+            try {
+                // Config
+                const cSnap = await getDoc(doc(db, "settings", "config"));
+                if (cSnap.exists()) CFG = cSnap.data();
+
+                // Sitenumber inputs
+                document.getElementById('siteNumber').value = CFG.siteNumber;
+                document.getElementById('refCode').value = CFG.defaultRef;
+                updatePreview();
+
+                // Btags
+                const bSnap = await getDoc(doc(db, "settings", "btags"));
+                if (bSnap.exists()) BTAGS = bSnap.data().list || [];
+
+                // Visits (Last 2000 for analytics)
+                const q = query(collection(db, "visits"), orderBy("timestamp", "desc"), limit(2000));
+                const vSnap = await getDocs(q);
+                VISITS = vSnap.docs.map(d => {
+                    const data = d.data();
+                    return { b: data.btag, t: data.timestamp ? data.timestamp.toMillis() : Date.now() };
+                });
+
+                renderAll();
+                document.getElementById('loading').style.display = 'none';
+
+            } catch (e) {
+                console.error(e);
+                showToast("Veri yüklenirken hata oluştu", true);
+                document.getElementById('loading').style.display = 'none';
             }
-
-            const btagsSnap = await getDoc(doc(db, "settings", "btags"));
-            btags = btagsSnap.exists() ? btagsSnap.data().list : [];
-            document.getElementById('val-btags').textContent = btags.length;
-            renderBtags();
-
-            const vSnap = await getDocs(query(collection(db, "visits"), orderBy("timestamp", "desc"), limit(5000)));
-            visits = vSnap.docs.map(d => d.data());
-            document.getElementById('val-all').textContent = visits.length;
-
-            const today = new Date().setHours(0, 0, 0, 0);
-            const todayVisits = visits.filter(v => v.timestamp?.toMillis() >= today);
-            document.getElementById('val-today').textContent = todayVisits.length;
-
-            renderChart();
-            document.getElementById('loading').style.display = 'none';
         }
 
-        window.saveConfig = async () => {
-            const sn = document.getElementById('inp-num').value;
-            const dr = document.getElementById('inp-ref').value;
-            await setDoc(doc(db, "settings", "config"), { siteNumber: sn, defaultRef: dr });
-            showToast("Ayarlar kaydedildi!");
-            init();
-        };
+        function renderAll() {
+            // Dashboard Stats
+            document.getElementById('statNum').textContent = CFG.siteNumber;
+            document.getElementById('statBtag').textContent = BTAGS.length;
 
-        window.addBtag = async () => {
-            const name = document.getElementById('inp-btag').value.trim();
-            if (!name) return;
-            btags.push({ name: name, created: new Date().toISOString() });
-            await setDoc(doc(db, "settings", "btags"), { list: btags });
-            document.getElementById('inp-btag').value = "";
-            init();
-        };
+            const now = Date.now();
+            const sod = new Date().setHours(0, 0, 0, 0);
+            const yestSod = sod - 86400000;
 
-        window.delBtag = async (idx) => {
-            btags.splice(idx, 1);
-            await setDoc(doc(db, "settings", "btags"), { list: btags });
-            init();
-        };
+            const todayVisits = VISITS.filter(v => v.t >= sod).length;
+            const yestVisits = VISITS.filter(v => v.t >= yestSod && v.t < sod).length;
 
-        function renderBtags() {
-            const container = document.getElementById('btag-list');
-            container.innerHTML = "<h3>Kayıtlı Btaglar</h3>";
-            btags.forEach((b, i) => {
-                container.innerHTML += `<div class="btag-item"><span>${b.name}</span> <button onclick="delBtag(${i})" style="color:red">Sil</button></div>`;
-            });
+            document.getElementById('statToday').textContent = todayVisits;
+            document.getElementById('statAll').textContent = VISITS.length; // actually loaded count
+
+            // Change indicator
+            const chEl = document.getElementById('statChg');
+            if (yestVisits === 0 && todayVisits === 0) { chEl.textContent = ''; }
+            else if (yestVisits === 0) { chEl.textContent = '↑ İlk veri!'; chEl.className = 'stat-change up'; }
+            else {
+                const pct = Math.round((todayVisits - yestVisits) / yestVisits * 100);
+                chEl.textContent = (pct > 0 ? '↑' : '↓') + Math.abs(pct) + '% dünden';
+                chEl.className = 'stat-change ' + (pct > 0 ? 'up' : 'down');
+            }
+
+            // Compare Box
+            document.getElementById('cmpYest').textContent = yestVisits;
+            document.getElementById('cmpToday').textContent = todayVisits;
+            const chip = document.getElementById('cmpChip');
+            if (yestVisits === 0 && todayVisits === 0) {
+                chip.textContent = '—'; chip.className = 'pct-chip same';
+            } else if (yestVisits === 0) {
+                chip.textContent = '+100%'; chip.className = 'pct-chip up';
+            } else {
+                const pct2 = Math.round((todayVisits - yestVisits) / yestVisits * 100);
+                chip.textContent = (pct2 > 0 ? '+' : '') + pct2 + '%';
+                chip.className = 'pct-chip ' + (pct2 > 0 ? 'up' : 'down');
+            }
+
+            // Bar Chart
+            renderChart();
+
+            // Top Btag
+            const counts = {};
+            VISITS.forEach(v => counts[v.b] = (counts[v.b] || 0) + 1);
+            let top = { name: '—', count: 0 };
+            for (const [name, cnt] of Object.entries(counts)) {
+                if (cnt > top.count) top = { name: name, count: cnt };
+            }
+            document.getElementById('topName').textContent = top.name;
+            document.getElementById('topCount').textContent = top.count;
+
+            // Btag List
+            renderBtags();
         }
 
         function renderChart() {
-            const chart = document.getElementById('chart');
-            const counts = {};
-            visits.forEach(v => {
-                const d = v.timestamp?.toDate().toLocaleDateString();
-                if (d) counts[d] = (counts[d] || 0) + 1;
+            const chart = document.getElementById('barChart');
+            const data = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const from = d.setHours(0, 0, 0, 0);
+                const to = from + 86400000;
+                const cnt = VISITS.filter(v => v.t >= from && v.t < to).length;
+                const lbl = i === 0 ? 'Bugün' : (d.getDate() + '/' + (d.getMonth() + 1));
+                data.push({ c: cnt, l: lbl });
+            }
+            const max = Math.max(...data.map(d => d.c)) || 1;
+            const colors = ['#6366f1', '#8b5cf6', '#7c3aed'];
+
+            let html = '';
+            data.forEach((d, i) => {
+                const h = Math.max(4, Math.round((d.c / max) * 100));
+                const col = colors[i % colors.length];
+                html += `<div class="bar-col">
+                <div class="bar-val">${d.c || ''}</div>
+                <div class="bar" style="height:${h}px;background:linear-gradient(180deg,${col},${col}88)">
+                    <div class="bar-lbl">${d.l}</div>
+                </div>
+            </div>`;
             });
-            const labels = Object.keys(counts).slice(-7);
-            chart.innerHTML = "";
-            labels.forEach(l => {
-                const h = Math.min(counts[l] * 5, 100);
-                chart.innerHTML += `<div class="bar" style="height:${h}px" title="${l}: ${counts[l]}"></div>`;
-            });
+            chart.innerHTML = html;
         }
 
-        window.switchSec = (id) => {
-            ["dashboard", "btag", "analiz"].forEach(s => document.getElementById(`sec-${s}`).style.display = s === id ? "block" : "none");
-            document.querySelectorAll('nav a').forEach(a => a.classList.toggle('active', a.textContent.includes(id)));
+        function renderBtags() {
+            const list = document.getElementById('btagList');
+            const b1 = document.getElementById('btagTotalBadge');
+            const b2 = document.getElementById('btagCountBadge');
+            if (b1) b1.textContent = BTAGS.length + ' btag';
+            if (b2) b2.textContent = BTAGS.length + ' adet';
+
+            if (BTAGS.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>Henüz btag oluşturulmadı</p></div>'; return;
+            }
+
+            let html = '';
+            BTAGS.forEach((b, idx) => {
+                const url = window.location.origin + '/' + b.name;
+                html += `<div class="btag-item">
+                <div class="btag-inner">
+                    <div class="btag-name">🏷️ ${b.name}</div>
+                    <div class="btag-url-text">${url}</div>
+                </div>
+                <div class="btag-actions">
+                    <button class="btn-icon" data-act="copy" data-url="${url}">📋</button>
+                    <button class="btn-icon" data-act="test" data-url="${url}">🌐</button>
+                    <button class="btn-icon danger" data-act="del" data-idx="${idx}">🗑️</button>
+                </div>
+            </div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        // ACTIONS
+        window.saveConfig = async () => {
+            const btn = document.getElementById('btnSave');
+            btn.textContent = 'Kaydediliyor...';
+            const sn = document.getElementById('siteNumber').value;
+            const dr = document.getElementById('refCode').value;
+            try {
+                await setDoc(doc(db, "settings", "config"), { siteNumber: sn, defaultRef: dr });
+                CFG.siteNumber = sn; CFG.defaultRef = dr;
+                renderAll();
+                showToast('✅ Ayarlar kaydedildi!');
+            } catch (e) { showToast('❌ Hata oluştu', true); }
+            btn.innerHTML = '<span>💾</span> Kaydet & Uygula';
         };
 
-        function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = "block"; setTimeout(() => t.style.display = "none", 2000); }
+        window.addBtag = async () => {
+            const inp = document.getElementById('btagInput');
+            const name = inp.value.trim();
+            if (!name) { showToast('⚠️ İsim boş olamaz', true); return; }
+            if (BTAGS.some(b => b.name.toLowerCase() === name.toLowerCase())) { showToast('⚠️ Bu btag zaten var', true); return; }
 
+            BTAGS.unshift({ name: name, created: new Date().toISOString() });
+            await setDoc(doc(db, "settings", "btags"), { list: BTAGS });
+            inp.value = '';
+            renderAll();
+            showToast('✅ Btag eklendi: ' + name);
+        };
+
+        window.delBtag = async (idx) => {
+            const name = BTAGS[idx].name;
+            if (!confirm(name + ' silinsin mi?')) return;
+            BTAGS.splice(idx, 1);
+            await setDoc(doc(db, "settings", "btags"), { list: BTAGS });
+            renderAll();
+            showToast('🗑️ Silindi: ' + name);
+        };
+
+        // EVENTS
+        document.getElementById('btnSave').onclick = window.saveConfig;
+        document.getElementById('btnAddBtag').onclick = window.addBtag;
+
+        document.getElementById('btnIncrementSave').onclick = async () => {
+            let n = parseInt(document.getElementById('siteNumber').value || 0) + 1;
+            document.getElementById('siteNumber').value = n;
+            await window.saveConfig();
+            showToast('✅ +1 Artırıldı');
+        };
+
+        document.getElementById('siteNumber').oninput = updatePreview;
+        function updatePreview() {
+            const n = document.getElementById('siteNumber').value;
+            document.getElementById('livePreview').textContent = `https://www.betsobet${n}.com/tr/`;
+        }
+
+        document.getElementById('btagInput').oninput = function () {
+            const v = this.value.trim();
+            document.getElementById('btagPreviewUrl').textContent = v ? `domain.com/${v}` : 'domain.com/BtagAdi';
+        };
+
+        // Global Click Delegation for dynamic lists
+        document.addEventListener('click', e => {
+            const btn = e.target.closest('.btn-icon');
+            if (!btn) return;
+            const act = btn.dataset.act;
+            if (act === 'del') window.delBtag(parseInt(btn.dataset.idx));
+            if (act === 'test') window.open(btn.dataset.url, '_blank');
+            if (act === 'copy') {
+                navigator.clipboard.writeText(btn.dataset.url);
+                showToast('📋 Kopyalandı');
+            }
+        });
+
+        // Nav
+        document.querySelectorAll('.sidebar nav a').forEach(a => {
+            a.onclick = function (e) {
+                e.preventDefault();
+                const sec = this.dataset.section;
+                document.querySelectorAll('.sidebar nav a').forEach(x => x.classList.remove('active'));
+                this.classList.add('active');
+                ['dashboard', 'btag', 'analiz'].forEach(s => {
+                    document.getElementById('sec-' + s).style.display = s === sec ? 'block' : 'none';
+                });
+                document.getElementById('pageTitle').textContent = this.textContent;
+            }
+        });
+
+        function showToast(m, err) {
+            const t = document.getElementById('toast');
+            const tx = document.getElementById('toastText');
+            tx.textContent = m;
+            t.className = 'toast ' + (err ? 'error' : 'success');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Start
         init();
     </script>
 </body>
