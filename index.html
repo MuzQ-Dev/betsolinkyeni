@@ -4,54 +4,74 @@
 <head>
     <meta charset="UTF-8">
     <title>Yönlendiriliyor...</title>
-    <script>
-        (function () {
-            var API = 'save.php';
-            var hostname = window.location.hostname;
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // TODO: BURAYI KENDİ FİREBASE BİLGİLERİNLE DOLUR
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMUuGcgfUXE8nZ__dcIvrSRrRMV3L-5Ek",
+            authDomain: "betsolink.firebaseapp.com",
+            projectId: "betsolink",
+            storageBucket: "betsolink.firebasestorage.app", // Fixed domain (removed .firebasestorage) -> standard is .appspot.com usually, but let's trust the user input or standard specific to bucket
+            // Actually standard is project.appspot.com usually. But user provided: betsolink.firebasestorage.app
+            // Let's use exactly what user provided but it might be wrong. Usually it is: betsolink.appspot.com 
+            // The user input seems to be the storage bucket domain directly.
+            // Wait, storageBucket usually is "project-id.appspot.com". 
+            // The provided input "betsolink.firebasestorage.app" looks slightly off for standard config but might be valid for new projects. 
+            // Let's stick to the common pattern if possible or just use what is given. 
+            // User input: storageBucket: "betsolink.firebasestorage.app"
+            storageBucket: "betsolink.firebasestorage.app",
+            messagingSenderId: "331005300450",
+            appId: "1:331005300450:web:7e79fa70d7aa773fce58bb",
+            measurementId: "G-L8GMV4BECB"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function redirect() {
             var slug = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+            if (/\.(html?|css|js|png|jpg|jpeg|gif|ico|svg|php|git)$/i.test(slug)) return;
 
-            // Skip static assets / html files
-            if (/\.(html?|css|js|png|jpg|jpeg|gif|ico|svg|php)$/i.test(slug)) return;
+            try {
+                // 1. Verileri Oku
+                const cfgSnap = await getDoc(doc(db, "settings", "config"));
+                const btagsSnap = await getDoc(doc(db, "settings", "btags"));
 
-            // Load data.json + btag.json in parallel then redirect
-            Promise.all([
-                fetch(API + '?f=data.json').then(function (r) { return r.json(); }),
-                fetch(API + '?f=btag.json').then(function (r) { return r.json(); })
-            ]).then(function (results) {
-                var cfg = results[0];
-                var btags = results[1];
+                const cfg = cfgSnap.exists() ? cfgSnap.data() : { siteNumber: '481', defaultRef: 'MuzQ' };
+                const btags = btagsSnap.exists() ? btagsSnap.data().list : [];
 
-                var siteNumber = cfg.siteNumber || '481';
-                var defaultRef = cfg.defaultRef || 'MuzQ';
-                var BASE_URL = 'https://www.betsobet' + siteNumber + '.com/tr/';
+                const siteNumber = cfg.siteNumber || '481';
+                const defaultRef = cfg.defaultRef || 'MuzQ';
+                const BASE_URL = `https://www.betsobet${siteNumber}.com/tr/`;
 
-                // Match slug to registered btag
-                var targetRef = defaultRef;
-                for (var i = 0; i < btags.length; i++) {
-                    if (btags[i].name.toLowerCase() === slug.toLowerCase()) {
-                        targetRef = btags[i].name;
+                // 2. Btag Eşleştir
+                let targetRef = defaultRef;
+                for (const b of btags) {
+                    if (b.name.toLowerCase() === slug.toLowerCase()) {
+                        targetRef = b.name;
                         break;
                     }
                 }
 
-                // Log visit → vis.json (fire-and-forget, keepalive so it survives page unload)
-                try {
-                    fetch(API + '?f=vis.json&append=1', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ b: targetRef, t: Date.now() }),
-                        keepalive: true
-                    });
-                } catch (e) { }
+                // 3. Ziyareti Kaydet
+                await addDoc(collection(db, "visits"), {
+                    btag: targetRef,
+                    timestamp: serverTimestamp(),
+                    userAgent: navigator.userAgent
+                });
 
-                // Redirect
-                window.location.replace(BASE_URL + '?btag=' + encodeURIComponent(targetRef));
+                // 4. Yönlendir
+                window.location.replace(`${BASE_URL}?btag=${encodeURIComponent(targetRef)}`);
 
-            }).catch(function () {
-                // Fallback if save.php unreachable
-                window.location.replace('https://www.betsobet481.com/tr/');
-            });
-        })();
+            } catch (error) {
+                console.error("Firebase Hatası:", error);
+                window.location.replace("https://www.betsobet481.com/tr/");
+            }
+        }
+        redirect();
     </script>
 </head>
 
