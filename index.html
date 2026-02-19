@@ -35,6 +35,12 @@
             var slug = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
             if (/\.(html?|css|js|png|jpg|jpeg|gif|ico|svg|php|git)$/i.test(slug)) return;
 
+            // Admin Paneli Yönlendirmesi
+            if (slug.toLowerCase() === 'admin') {
+                window.location.replace('login.html');
+                return;
+            }
+
             try {
                 // 1. Verileri Oku
                 const cfgSnap = await getDoc(doc(db, "settings", "config"));
