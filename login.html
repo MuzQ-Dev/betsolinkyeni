@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Giriş</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a1a;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .bg-gradient .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb:nth-child(2) {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            bottom: -80px;
+            right: -80px;
+            animation-delay: -3s;
+        }
+
+        .orb:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(30px, -30px) scale(1.05);
+            }
+
+            50% {
+                transform: translate(-20px, 20px) scale(0.95);
+            }
+
+            75% {
+                transform: translate(15px, 15px) scale(1.02);
+            }
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 420px;
+            padding: 48px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo .icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.08);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-group input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-login.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .error-msg {
+            text-align: center;
+            color: #f43f5e;
+            font-size: 13px;
+            margin-top: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            min-height: 20px;
+        }
+
+        .error-msg.show {
+            opacity: 1;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            50% {
+                transform: translateX(8px);
+            }
+
+            75% {
+                transform: translateX(-4px);
+            }
+        }
+
+        /* Lockout banner */
+        .lockout-banner {
+            display: none;
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .lockout-banner.show {
+            display: block;
+        }
+
+        .lockout-banner .lock-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .lockout-banner h4 {
+            color: #f43f5e;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .lockout-banner p {
+            color: rgba(244, 63, 94, 0.8);
+            font-size: 12px;
+        }
+
+        .lockout-banner .countdown {
+            color: #f43f5e;
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        /* Attempt dots */
+        .attempt-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            margin-bottom: 4px;
+        }
+
+        .dot-attempt {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .dot-attempt.used {
+            background: #f43f5e;
+            box-shadow: 0 0 6px rgba(244, 63, 94, 0.5);
+        }
+
+        .dot-label {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 4px;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particles span {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: rise linear infinite;
+        }
+
+        @keyframes rise {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10vh) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+    <div class="particles" id="particles"></div>
+
+    <div class="login-card">
+        <div class="logo">
+            <div class="icon">🔐</div>
+            <h1>Admin Panel</h1>
+            <p>Güvenli yönetim paneline giriş yapın</p>
+        </div>
+
+        <!-- Lockout Banner -->
+        <div class="lockout-banner" id="lockoutBanner">
+            <div class="lock-icon">🔒</div>
+            <h4>Hesap Geçici Olarak Kilitlendi</h4>
+            <p>Çok fazla başarısız giriş denemesi tespit edildi.</p>
+            <div class="countdown" id="lockoutCountdown">15:00</div>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+            <div class="form-group">
+                <label>Kullanıcı Adı</label>
+                <input type="text" id="username" placeholder="Kullanıcı adınızı girin" autofocus autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>Şifre</label>
+                <input type="password" id="password" placeholder="Şifrenizi girin" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-login" id="btnLogin">Giriş Yap</button>
+            <div class="error-msg" id="errorMsg"></div>
+        </form>
+
+        <!-- Attempt indicator -->
+        <div class="dot-label" id="attemptLabel"></div>
+        <div class="attempt-dots" id="attemptDots">
+            <div class="dot-attempt" id="dot1"></div>
+            <div class="dot-attempt" id="dot2"></div>
+            <div class="dot-attempt" id="dot3"></div>
+            <div class="dot-attempt" id="dot4"></div>
+            <div class="dot-attempt" id="dot5"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // ── Particles ──────────────────────────────────────────────
+            var pc = document.getElementById('particles');
+            for (var i = 0; i < 30; i++) {
+                var sp = document.createElement('span');
+                sp.style.left = Math.random() * 100 + '%';
+                sp.style.animationDuration = (5 + Math.random() * 10) + 's';
+                sp.style.animationDelay = Math.random() * 5 + 's';
+                sp.style.width = sp.style.height = (2 + Math.random() * 3) + 'px';
+                pc.appendChild(sp);
+            }
+
+            // ── Constants ──────────────────────────────────────────────
+            var CORRECT_USER = 'admin';
+            // SHA-256 of "123" — computed at build time, never sent as plaintext
+            var CORRECT_PASS_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+            var MAX_ATTEMPTS = 5;
+            var LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+            var SESSION_MS = 2 * 60 * 60 * 1000; // 2 hours
+
+            // ── SHA-256 (Web Crypto API) ────────────────────────────────
+            function sha256(message) {
+                var encoder = new TextEncoder();
+                var data = encoder.encode(message);
+                return crypto.subtle.digest('SHA-256', data).then(function (buf) {
+                    return Array.from(new Uint8Array(buf))
+                        .map(function (b) { return b.toString(16).padStart(2, '0'); })
+                        .join('');
+                });
+            }
+
+            // ── Session Token Generator ────────────────────────────────
+            function generateToken() {
+                var arr = new Uint8Array(32);
+                crypto.getRandomValues(arr);
+                return Array.from(arr).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+            }
+
+            // ── Token Signature (HMAC-like) ────────────────────────────
+            // Signs: token + expiry + username using SHA-256
+            function signSession(token, expiry, user) {
+                return sha256(token + '|' + expiry + '|' + user + '|MUZQ_PANEL_SECRET_2026');
+            }
+
+            // ── Rate Limiting ──────────────────────────────────────────
+            function getAttempts() {
+                try {
+                    return JSON.parse(localStorage.getItem('_lf') || '{"c":0,"t":0}');
+                } catch (e) { return { c: 0, t: 0 }; }
+            }
+            function setAttempts(c, t) {
+                localStorage.setItem('_lf', JSON.stringify({ c: c, t: t }));
+            }
+            function resetAttempts() {
+                localStorage.removeItem('_lf');
+            }
+            function isLockedOut() {
+                var a = getAttempts();
+                if (a.c >= MAX_ATTEMPTS) {
+                    var remaining = a.t + LOCKOUT_MS - Date.now();
+                    if (remaining > 0) return remaining;
+                    resetAttempts();
+                }
+                return false;
+            }
+
+            // ── UI Elements ────────────────────────────────────────────
+            var form = document.getElementById('loginForm');
+            var inputUser = document.getElementById('username');
+            var inputPass = document.getElementById('password');
+            var btnLogin = document.getElementById('btnLogin');
+            var errorMsg = document.getElementById('errorMsg');
+            var lockoutBanner = document.getElementById('lockoutBanner');
+            var countdown = document.getElementById('lockoutCountdown');
+            var attemptLabel = document.getElementById('attemptLabel');
+            var dots = [
+                document.getElementById('dot1'),
+                document.getElementById('dot2'),
+                document.getElementById('dot3'),
+                document.getElementById('dot4'),
+                document.getElementById('dot5')
+            ];
+
+            // ── Already logged in? ─────────────────────────────────────
+            (function checkExisting() {
+                var token = localStorage.getItem('_st');
+                var expiry = parseInt(localStorage.getItem('_se') || '0');
+                var sig = localStorage.getItem('_ss');
+                if (!token || !expiry || !sig) return;
+                if (Date.now() > expiry) { clearSession(); return; }
+                signSession(token, expiry, CORRECT_USER).then(function (expected) {
+                    if (expected === sig) {
+                        window.location.replace('admin.html');
+                    } else {
+                        clearSession();
+                    }
+                });
+            })();
+
+            function clearSession() {
+                localStorage.removeItem('_st');
+                localStorage.removeItem('_se');
+                localStorage.removeItem('_ss');
+            }
+
+            // ── Lockout UI ─────────────────────────────────────────────
+            var lockInterval = null;
+            function showLockout(remaining) {
+                lockoutBanner.classList.add('show');
+                form.querySelectorAll('input, button').forEach(function (el) { el.disabled = true; });
+                updateCountdown(remaining);
+                lockInterval = setInterval(function () {
+                    remaining -= 1000;
+                    if (remaining <= 0) {
+                        clearInterval(lockInterval);
+                        resetAttempts();
+                        lockoutBanner.classList.remove('show');
+                        form.querySelectorAll('input, button').forEach(function (el) { el.disabled = false; });
+                        updateDots();
+                        countdown.textContent = '00:00';
+                    } else {
+                        updateCountdown(remaining);
+                    }
+                }, 1000);
+            }
+            function updateCountdown(ms) {
+                var mins = Math.floor(ms / 60000);
+                var secs = Math.floor((ms % 60000) / 1000);
+                countdown.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            }
+
+            // ── Attempt Dots ───────────────────────────────────────────
+            function updateDots() {
+                var a = getAttempts();
+                dots.forEach(function (d, i) {
+                    d.classList.toggle('used', i < a.c);
+                });
+                if (a.c > 0 && a.c < MAX_ATTEMPTS) {
+                    attemptLabel.textContent = (MAX_ATTEMPTS - a.c) + ' deneme hakkınız kaldı';
+                } else {
+                    attemptLabel.textContent = '';
+                }
+            }
+
+            // ── On load: check lockout ─────────────────────────────────
+            var lockRemaining = isLockedOut();
+            if (lockRemaining) {
+                showLockout(lockRemaining);
+            }
+            updateDots();
+
+            // ── Error UI ───────────────────────────────────────────────
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.remove('show');
+                void errorMsg.offsetWidth; // reflow to restart animation
+                errorMsg.classList.add('show');
+            }
+
+            // ── Login Submit ───────────────────────────────────────────
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var lockRem = isLockedOut();
+                if (lockRem) { showLockout(lockRem); return; }
+
+                var user = inputUser.value.trim();
+                var pass = inputPass.value;
+
+                if (!user || !pass) {
+                    showError('⚠️ Tüm alanları doldurun!');
+                    return;
+                }
+
+                btnLogin.classList.add('loading');
+                btnLogin.textContent = '';
+
+                // Hash the password before comparing
+                sha256(pass).then(function (passHash) {
+                    // Add artificial delay to slow brute force + UX
+                    setTimeout(function () {
+                        if (user === CORRECT_USER && passHash === CORRECT_PASS_HASH) {
+                            // ── SUCCESS ──
+                            resetAttempts();
+                            var token = generateToken();
+                            var expiry = Date.now() + SESSION_MS;
+                            signSession(token, expiry, CORRECT_USER).then(function (sig) {
+                                localStorage.setItem('_st', token);
+                                localStorage.setItem('_se', String(expiry));
+                                localStorage.setItem('_ss', sig);
+                                // Cleanup
+                                inputPass.value = '';
+                                window.location.replace('admin.html');
+                            });
+                        } else {
+                            // ── FAIL ──
+                            var a = getAttempts();
+                            a.c += 1;
+                            a.t = Date.now();
+                            setAttempts(a.c, a.t);
+
+                            btnLogin.classList.remove('loading');
+                            btnLogin.textContent = 'Giriş Yap';
+                            inputPass.value = '';
+
+                            var rem = isLockedOut();
+                            if (rem) {
+                                showLockout(rem);
+                                showError('🔒 Hesap kilitlendi! 15 dakika bekleyin.');
+                            } else {
+                                var left = MAX_ATTEMPTS - a.c;
+                                showError('❌ Hatalı giriş! ' + left + ' hakkınız kaldı.');
+                                updateDots();
+                            }
+                        }
+                    }, 900);
+                });
+            });
+
+        })();
+    </script>
+</body>
+
+</html>

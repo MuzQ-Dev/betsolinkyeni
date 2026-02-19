@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Yönlendiriliyor...</title>
+    <script>
+        (function () {
+            var API = 'save.php';
+            var hostname = window.location.hostname;
+            var slug = window.location.pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+
+            // Skip static assets / html files
+            if (/\.(html?|css|js|png|jpg|jpeg|gif|ico|svg|php)$/i.test(slug)) return;
+
+            // Load data.json + btag.json in parallel then redirect
+            Promise.all([
+                fetch(API + '?f=data.json').then(function (r) { return r.json(); }),
+                fetch(API + '?f=btag.json').then(function (r) { return r.json(); })
+            ]).then(function (results) {
+                var cfg = results[0];
+                var btags = results[1];
+
+                var siteNumber = cfg.siteNumber || '481';
+                var defaultRef = cfg.defaultRef || 'MuzQ';
+                var BASE_URL = 'https://www.betsobet' + siteNumber + '.com/tr/';
+
+                // Match slug to registered btag
+                var targetRef = defaultRef;
+                for (var i = 0; i < btags.length; i++) {
+                    if (btags[i].name.toLowerCase() === slug.toLowerCase()) {
+                        targetRef = btags[i].name;
+                        break;
+                    }
+                }
+
+                // Log visit → vis.json (fire-and-forget, keepalive so it survives page unload)
+                try {
+                    fetch(API + '?f=vis.json&append=1', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ b: targetRef, t: Date.now() }),
+                        keepalive: true
+                    });
+                } catch (e) { }
+
+                // Redirect
+                window.location.replace(BASE_URL + '?btag=' + encodeURIComponent(targetRef));
+
+            }).catch(function () {
+                // Fallback if save.php unreachable
+                window.location.replace('https://www.betsobet481.com/tr/');
+            });
+        })();
+    </script>
+</head>
+
+<body></body>
+
+</html>

@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif
+        }
+
+        :root {
+            --bg: #0a0a1a;
+            --card: rgba(255, 255, 255, 0.04);
+            --card-h: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #fff;
+            --text2: rgba(255, 255, 255, 0.55);
+            --text3: rgba(255, 255, 255, 0.3);
+            --accent: #6366f1;
+            --al: #818cf8;
+            --ag: rgba(99, 102, 241, 0.25);
+            --success: #22c55e;
+            --danger: #f43f5e;
+            --warn: #f59e0b;
+            --sw: 260px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        /* Loading overlay */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        #loading p {
+            font-size: 13px;
+            color: var(--text3)
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sw);
+            height: 100vh;
+            background: rgba(10, 10, 26, 0.97);
+            border-right: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column
+        }
+
+        .brand {
+            padding: 22px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3)
+        }
+
+        .brand h2 {
+            font-size: 16px;
+            font-weight: 700
+        }
+
+        .brand span {
+            font-size: 11px;
+            color: var(--text3);
+            display: block;
+            margin-top: 2px
+        }
+
+        .sidebar nav {
+            flex: 1;
+            padding: 10px
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 10px 12px 6px
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            border-radius: 10px;
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 2px
+        }
+
+        .sidebar nav a:hover {
+            background: var(--card-h);
+            color: var(--text)
+        }
+
+        .sidebar nav a.active {
+            background: var(--ag);
+            color: var(--al)
+        }
+
+        .sidebar-footer {
+            padding: 12px;
+            border-top: 1px solid var(--border)
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            border-radius: 10px;
+            color: var(--danger);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .btn-logout:hover {
+            background: rgba(244, 63, 94, 0.15)
+        }
+
+        /* Main */
+        .main {
+            margin-left: var(--sw);
+            padding: 30px 38px;
+            min-height: 100vh
+        }
+
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 26px
+        }
+
+        .main-header h1 {
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: -0.4px
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 12px;
+            color: var(--text2)
+        }
+
+        .dot-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.5
+            }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 26px
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 16px 16px 0 0
+        }
+
+        .stat-card:nth-child(1)::before {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6)
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: linear-gradient(90deg, #22c55e, #10b981)
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: linear-gradient(90deg, #f59e0b, #f97316)
+        }
+
+        .stat-card:nth-child(4)::before {
+            background: linear-gradient(90deg, #ec4899, #f43f5e)
+        }
+
+        .stat-card:nth-child(5)::before {
+            background: linear-gradient(90deg, #06b6d4, #3b82f6)
+        }
+
+        .stat-card:nth-child(6)::before {
+            background: linear-gradient(90deg, #a855f7, #7c3aed)
+        }
+
+        .stat-card:hover {
+            background: var(--card-h);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3)
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 10px
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+            margin-bottom: 3px
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text2)
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 4px;
+            font-weight: 600
+        }
+
+        .stat-change.up {
+            color: var(--success)
+        }
+
+        .stat-change.down {
+            color: var(--danger)
+        }
+
+        .stat-change.same {
+            color: var(--text3)
+        }
+
+        /* Cards */
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 26px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            transition: border-color 0.3s
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12)
+        }
+
+        .card-full {
+            grid-column: 1/-1
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .card-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-weight: 600
+        }
+
+        .badge-purple {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--al)
+        }
+
+        .badge-green {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success)
+        }
+
+        /* Inputs */
+        .live-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px
+        }
+
+        .preview-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text3);
+            margin-bottom: 6px
+        }
+
+        .preview-url {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--al);
+            word-break: break-all
+        }
+
+        .url-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px
+        }
+
+        .url-row label {
+            font-size: 12px;
+            color: var(--text2);
+            white-space: nowrap
+        }
+
+        .input-num {
+            flex: 1;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+            -moz-appearance: textfield;
+            appearance: textfield
+        }
+
+        .input-num::-webkit-inner-spin-button,
+        .input-num::-webkit-outer-spin-button {
+            -webkit-appearance: none
+        }
+
+        .input-num:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--ag)
+        }
+
+        .num-ctrl {
+            display: flex;
+            gap: 5px
+        }
+
+        .num-ctrl button {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .num-ctrl button:hover {
+            background: var(--ag);
+            border-color: var(--accent);
+            color: var(--al)
+        }
+
+        .field-group {
+            margin-bottom: 12px
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--text2);
+            font-weight: 500;
+            margin-bottom: 6px
+        }
+
+        .field-group input {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s
+        }
+
+        .field-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--ag)
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35)
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none
+        }
+
+        .btn-sec {
+            width: 100%;
+            padding: 11px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px
+        }
+
+        .btn-sec:hover {
+            background: rgba(255, 255, 255, 0.1)
+        }
+
+        /* Btag list */
+        .scroll-list {
+            max-height: 320px;
+            overflow-y: auto
+        }
+
+        .scroll-list::-webkit-scrollbar {
+            width: 4px
+        }
+
+        .scroll-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px
+        }
+
+        .btag-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 13px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            gap: 10px;
+            transition: background 0.2s
+        }
+
+        .btag-item:hover {
+            background: rgba(255, 255, 255, 0.03)
+        }
+
+        .btag-item:last-child {
+            border-bottom: none
+        }
+
+        .btag-inner {
+            flex: 1;
+            min-width: 0
+        }
+
+        .btag-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px
+        }
+
+        .btag-url {
+            font-size: 11px;
+            color: var(--text3);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 220px
+        }
+
+        .btag-acts {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff
+        }
+
+        .btn-icon.del:hover {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--danger)
+        }
+
+        /* Info */
+        .info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px
+        }
+
+        .info-icon {
+            font-size: 18px;
+            flex-shrink: 0
+        }
+
+        .info-text strong {
+            display: block;
+            font-size: 13px;
+            color: #fff;
+            margin-bottom: 2px
+        }
+
+        .info-text p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            line-height: 1.5
+        }
+
+        .info-text code {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--al);
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 10px
+        }
+
+        /* Empty */
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text3)
+        }
+
+        .empty-icon {
+            font-size: 32px;
+            margin-bottom: 8px
+        }
+
+        .empty-state p {
+            font-size: 12px
+        }
+
+        /* Analytics */
+        .compare-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 22px
+        }
+
+        .compare-side {
+            text-align: center
+        }
+
+        .compare-num {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px
+        }
+
+        .compare-lbl {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 4px
+        }
+
+        .compare-mid {
+            text-align: center
+        }
+
+        .compare-vs {
+            font-size: 11px;
+            color: var(--text3);
+            margin-bottom: 6px
+        }
+
+        .pct-chip {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700
+        }
+
+        .pct-chip.up {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success)
+        }
+
+        .pct-chip.down {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--danger)
+        }
+
+        .pct-chip.same {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text3)
+        }
+
+        .chart-wrap {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            overflow: hidden
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 5px;
+            height: 130px;
+            padding-bottom: 22px;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06)
+        }
+
+        .bar-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+            gap: 3px;
+            height: 100%
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            min-height: 3px;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: default
+        }
+
+        .bar:hover {
+            filter: brightness(1.25)
+        }
+
+        .bar-val {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text2);
+            min-height: 12px
+        }
+
+        .bar-lbl {
+            position: absolute;
+            bottom: -18px;
+            font-size: 9px;
+            color: var(--text3);
+            white-space: nowrap;
+            transform: translateX(-50%);
+            left: 50%
+        }
+
+        .time-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 14px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text2);
+            transition: all 0.2s
+        }
+
+        .tab.active {
+            background: var(--ag);
+            border-color: var(--accent);
+            color: var(--al)
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08)
+        }
+
+        .btag-row {
+            display: flex;
+            align-items: center;
+            padding: 9px 2px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            gap: 10px
+        }
+
+        .btag-row:last-child {
+            border-bottom: none
+        }
+
+        .btag-row-name {
+            width: 110px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .btag-mini-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 100px;
+            height: 7px;
+            overflow: hidden
+        }
+
+        .btag-mini-fill {
+            height: 100%;
+            border-radius: 100px;
+            transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1)
+        }
+
+        .btag-row-count {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--al);
+            width: 36px;
+            text-align: right;
+            flex-shrink: 0
+        }
+
+        .btag-row-pct {
+            font-size: 10px;
+            color: var(--text3);
+            width: 34px;
+            text-align: right;
+            flex-shrink: 0
+        }
+
+        .top-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warn);
+            padding: 1px 6px;
+            border-radius: 20px;
+            margin-left: 5px;
+            vertical-align: middle
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 26px;
+            right: 26px;
+            padding: 13px 18px;
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            z-index: 1000;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        .toast.success {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: var(--success)
+        }
+
+        .toast.error {
+            background: rgba(244, 63, 94, 0.15);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--danger)
+        }
+
+        .toast.info {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+            color: var(--al)
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @media(max-width:1024px) {
+            .section-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:768px) {
+            .main {
+                margin-left: 0;
+                padding: 18px 14px
+            }
+
+            .sidebar {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading overlay -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Veriler yükleniyor...</p>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">⚡</div>
+            <div>
+                <h2>Panel</h2><span>Yönlendirme Yönetimi</span>
+            </div>
+        </div>
+        <nav>
+            <div class="nav-label">Menü</div>
+            <a href="#" class="active" data-section="dashboard"><span>📊</span> Dashboard</a>
+            <a href="#" data-section="btag"><span>🏷️</span> Btag Yönetimi</a>
+            <a href="#" data-section="analiz"><span>📈</span> Btag Analiz</a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-logout" id="btnLogout"><span>🚪</span> Çıkış Yap</button>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="main-header fade-in">
+            <h1 id="pageTitle">📊 Dashboard</h1>
+            <div class="header-badge">
+                <div class="dot-pulse"></div><span>Oturum Aktif</span>
+            </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="sec-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🔢</div>
+                    <div class="stat-value" id="statNum">—</div>
+                    <div class="stat-label">Site Numarası</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🏷️</div>
+                    <div class="stat-value" id="statBtag">—</div>
+                    <div class="stat-label">Kayıtlı Btag</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="statToday">—</div>
+                    <div class="stat-label">Bugünkü Giriş<div class="stat-change" id="statChg"></div>
+                    </div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📆</div>
+                    <div class="stat-value" id="statMonth">—</div>
+                    <div class="stat-label">Bu Aylık Giriş</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="statAll">—</div>
+                    <div class="stat-label">Tüm Zamanlar</div>
+                </div>
+            </div>
+            <div class="section-grid">
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🔗 URL Ayarları</h3><span class="badge badge-purple">Aktif</span>
+                    </div>
+                    <div class="live-preview">
+                        <div class="preview-label">Yönlendirme URL</div>
+                        <div class="preview-url" id="livePreview">—</div>
+                    </div>
+                    <div class="url-row">
+                        <label>Site No:</label>
+                        <input type="number" class="input-num" id="siteNumber" value="481" min="1" max="9999">
+                        <div class="num-ctrl"><button id="btnMinus">−</button><button id="btnPlus">+</button></div>
+                    </div>
+                    <div class="field-group"><label>Default Affiliate Ref Kodu</label><input type="text" id="refCode"
+                            value="MuzQ" placeholder="Örn: MuzQ"></div>
+                    <button class="btn-primary" id="btnSave"><span>💾</span> Kaydet & Uygula</button>
+                </div>
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>⚡ Hızlı İşlemler</h3>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:9px">
+                        <button class="btn-sec" id="btnTest"><span>🌐</span> URL'yi Test Et</button>
+                        <button class="btn-sec" id="btnCopy"><span>📋</span> URL Kopyala</button>
+                        <button class="btn-sec" id="btnInc"><span>⏫</span> +1 Artır & Kaydet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BTAG -->
+        <div id="sec-btag" style="display:none">
+            <div class="section-grid">
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🏷️ Yeni Btag Oluştur</h3><span class="badge badge-purple" id="btagBadge">0 btag</span>
+                    </div>
+                    <div class="live-preview">
+                        <div class="preview-label">Oluşturulacak URL</div>
+                        <div class="preview-url" id="btagPrev">domain.com/BtagAdi</div>
+                    </div>
+                    <div class="field-group"><label>Btag / Üye Adı</label><input type="text" id="btagInput"
+                            placeholder="Örn: Tugce, Ali123, Partner1"></div>
+                    <button class="btn-primary" id="btnAddBtag" style="margin-top:6px"><span>➕</span> Btag
+                        Oluştur</button>
+                </div>
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>📋 Btag Listesi</h3><span class="badge badge-green" id="btagCount">0 adet</span>
+                    </div>
+                    <div class="scroll-list" id="btagList">
+                        <div class="empty-state">
+                            <div class="empty-icon">🏷️</div>
+                            <p>Henüz btag oluşturulmadı</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card card-full fade-in">
+                    <div class="card-header">
+                        <h3>ℹ️ Nasıl Çalışır?</h3>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+                        <div class="info-box">
+                            <div class="info-icon">1️⃣</div>
+                            <div class="info-text"><strong>Btag Oluştur</strong>
+                                <p>Üye için btag adı girin. Örn: <code>Tugce</code></p>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-icon">2️⃣</div>
+                            <div class="info-text"><strong>URL Paylaş</strong>
+                                <p><code>domain.com/Tugce</code> → <code>betsobet481.com/?btag=Tugce</code></p>
+                            </div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-icon">3️⃣</div>
+                            <div class="info-text"><strong>Analiz Yap</strong>
+                                <p>Btag Analiz menüsünden giriş istatistiklerini takip edin.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALIZ -->
+        <div id="sec-analiz" style="display:none">
+            <!-- Dün vs Bugün -->
+            <div class="compare-box fade-in">
+                <div class="compare-side">
+                    <div class="compare-num" id="cmpYest" style="color:var(--text2)">—</div>
+                    <div class="compare-lbl">Dün</div>
+                </div>
+                <div class="compare-mid">
+                    <div class="compare-vs">Dün → Bugün</div>
+                    <div class="pct-chip same" id="cmpChip">—</div>
+                </div>
+                <div class="compare-side">
+                    <div class="compare-num" id="cmpToday" style="color:var(--success)">—</div>
+                    <div class="compare-lbl">Bugün</div>
+                </div>
+            </div>
+            <!-- Stat cards -->
+            <div class="stats-grid" style="margin-bottom:24px">
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🕐</div>
+                    <div class="stat-value" id="aHour">—</div>
+                    <div class="stat-label">Son 1 Saat</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="aToday">—</div>
+                    <div class="stat-label">Bugün</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value" id="aYest">—</div>
+                    <div class="stat-label">Dün</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">📆</div>
+                    <div class="stat-value" id="aWeek">—</div>
+                    <div class="stat-label">Bu Hafta</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🗓️</div>
+                    <div class="stat-value" id="aMonth">—</div>
+                    <div class="stat-label">Bu Ay</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-value" id="aAll">—</div>
+                    <div class="stat-label">Tüm Zamanlar</div>
+                </div>
+            </div>
+            <div class="section-grid">
+                <!-- Bar Chart -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>📊 Günlük Giriş Grafiği</h3>
+                    </div>
+                    <div class="time-tabs" id="chartTabs">
+                        <div class="tab active" data-range="7">7 Gün</div>
+                        <div class="tab" data-range="14">14 Gün</div>
+                        <div class="tab" data-range="30">30 Gün</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <div class="bar-chart" id="barChart">
+                            <div class="empty-state" style="padding:20px">
+                                <p>Veri bekleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Top Btag -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <h3>🏆 En Popüler Btag</h3>
+                    </div>
+                    <div style="text-align:center;padding:20px 10px">
+                        <div style="font-size:48px;margin-bottom:10px">🏷️</div>
+                        <div style="font-size:22px;font-weight:800;color:var(--al)" id="topName">—</div>
+                        <div style="font-size:12px;color:var(--text3);margin-top:4px">tüm zamanların lider btag'ı</div>
+                        <div style="font-size:34px;font-weight:800;color:var(--warn);margin-top:14px" id="topCount">0
+                        </div>
+                        <div style="font-size:12px;color:var(--text3)">toplam giriş</div>
+                    </div>
+                </div>
+                <!-- Btag Table -->
+                <div class="card card-full fade-in">
+                    <div class="card-header">
+                        <h3>🏷️ Btag Bazlı Detay</h3>
+                        <div class="time-tabs" id="btagTabs" style="margin-bottom:0">
+                            <div class="tab active" data-brange="all">Tüm Zamanlar</div>
+                            <div class="tab" data-brange="month">Bu Ay</div>
+                            <div class="tab" data-brange="week">Bu Hafta</div>
+                            <div class="tab" data-brange="today">Bugün</div>
+                        </div>
+                    </div>
+                    <div id="btagTable">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <p>Henüz veri yok</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"><span id="toastTxt"></span></div>
+
+    <script>
+        'use strict';
+
+        // ══ SECURITY (tokens stay in localStorage — browser-specific) ══════════
+        var SESSION_MS = 2 * 60 * 60 * 1000, SECRET = 'MUZQ_PANEL_SECRET_2026', CU = 'admin';
+        function sha256(m) { return crypto.subtle.digest('SHA-256', new TextEncoder().encode(m)).then(function (b) { return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, '0') }).join('') }) }
+        function sign(t, e, u) { return sha256(t + '|' + e + '|' + u + '|' + SECRET) }
+        function secureLogout() { ['_st', '_se', '_ss'].forEach(function (k) { localStorage.removeItem(k) }); window.location.replace('login.html') }
+        (function () {
+            var t = localStorage.getItem('_st'), e = parseInt(localStorage.getItem('_se') || '0'), s = localStorage.getItem('_ss');
+            if (!t || !e || !s) { window.location.replace('login.html'); return }
+            if (Date.now() > e) { secureLogout(); return }
+            sign(t, e, CU).then(function (x) { if (x !== s) secureLogout() })
+        })();
+        function renew() { var t = localStorage.getItem('_st'), e = parseInt(localStorage.getItem('_se') || '0'); if (!t || Date.now() > e) return; var ne = Date.now() + SESSION_MS; sign(t, ne, CU).then(function (s) { localStorage.setItem('_se', String(ne)); localStorage.setItem('_ss', s) }) }
+        document.addEventListener('click', renew); document.addEventListener('keydown', renew);
+        setInterval(function () { var e = parseInt(localStorage.getItem('_se') || '0'), t = localStorage.getItem('_st'), s = localStorage.getItem('_ss'); if (!t || !s || Date.now() > e) { secureLogout(); return } sign(t, e, CU).then(function (x) { if (x !== s) secureLogout() }) }, 60000);
+        setInterval(function () { if (window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160) secureLogout() }, 3000);
+        document.getElementById('btnLogout').addEventListener('click', secureLogout);
+
+        // ══ API HELPERS ════════════════════════════════════════════════════════
+        var API = 'save.php';
+        function readJSON(f) { return fetch(API + '?f=' + f).then(function (r) { return r.json() }) }
+        function writeJSON(f, data) { return fetch(API + '?f=' + f, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }) }
+
+        // ══ IN-MEMORY STATE ════════════════════════════════════════════════════
+        var S = { cfg: { siteNumber: '481', defaultRef: 'MuzQ' }, btags: [] };
+
+        // ══ SECTION SWITCHING ══════════════════════════════════════════════════
+        var SECS = ['dashboard', 'btag', 'analiz'];
+        var TITLES = { dashboard: '📊 Dashboard', btag: '🏷️ Btag Yönetimi', analiz: '📈 Btag Analiz' };
+        document.querySelectorAll('.sidebar nav a').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault(); var sec = this.getAttribute('data-section');
+                document.querySelectorAll('.sidebar nav a').forEach(function (l) { l.classList.remove('active') });
+                this.classList.add('active');
+                document.getElementById('pageTitle').textContent = TITLES[sec] || '📊 Dashboard';
+                SECS.forEach(function (s) { var el = document.getElementById('sec-' + s); if (el) el.style.display = s === sec ? 'block' : 'none' });
+                if (sec === 'btag') renderBtags();
+                if (sec === 'analiz') loadAnaliz();
+                if (sec === 'dashboard') updateDashStats();
+            })
+        });
+
+        // ══ INIT ═══════════════════════════════════════════════════════════════
+        Promise.all([readJSON('data.json'), readJSON('btag.json')]).then(function (res) {
+            S.cfg = res[0]; S.btags = Array.isArray(res[1]) ? res[1] : [];
+            // populate URL fields
+            document.getElementById('siteNumber').value = S.cfg.siteNumber || '481';
+            document.getElementById('refCode').value = S.cfg.defaultRef || 'MuzQ';
+            updPrev();
+            updateDashStats();
+            document.getElementById('loading').style.display = 'none';
+        }).catch(function () {
+            showToast('❌ save.php erişilemiyor!', 'error');
+            document.getElementById('loading').style.display = 'none';
+        });
+
+        // ══ DASHBOARD ══════════════════════════════════════════════════════════
+        function buildUrl(n) { return 'https://www.betsobet' + n + '.com/tr/' }
+        function updPrev() { var n = document.getElementById('siteNumber').value || '___'; document.getElementById('livePreview').textContent = buildUrl(n) }
+        document.getElementById('siteNumber').addEventListener('input', updPrev);
+        document.getElementById('btnPlus').addEventListener('click', function () { document.getElementById('siteNumber').value = parseInt(document.getElementById('siteNumber').value || 0) + 1; updPrev() });
+        document.getElementById('btnMinus').addEventListener('click', function () { var v = parseInt(document.getElementById('siteNumber').value || 0) - 1; if (v >= 1) { document.getElementById('siteNumber').value = v; updPrev() } });
+
+        function updateDashStats() {
+            document.getElementById('statNum').textContent = S.cfg.siteNumber || '481';
+            document.getElementById('statBtag').textContent = S.btags.length;
+            // Async load vis for dash stats
+            readJSON('vis.json').then(function (vis) {
+                if (!Array.isArray(vis)) vis = [];
+                var ts = sod(), ys = ts - 86400000, ms = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
+                var tod = vis.filter(function (v) { return v.t >= ts }).length;
+                var yes = vis.filter(function (v) { return v.t >= ys && v.t < ts }).length;
+                document.getElementById('statToday').textContent = tod;
+                document.getElementById('statMonth').textContent = vis.filter(function (v) { return v.t >= ms }).length;
+                document.getElementById('statAll').textContent = vis.length;
+                var chEl = document.getElementById('statChg');
+                if (yes === 0 && tod === 0) { chEl.textContent = ''; chEl.className = 'stat-change' }
+                else if (yes === 0) { chEl.textContent = '🆕 İlk giriş!'; chEl.className = 'stat-change up' }
+                else { var pct = Math.round((tod - yes) / yes * 100); chEl.className = 'stat-change ' + (pct > 0 ? 'up' : pct < 0 ? 'down' : 'same'); chEl.textContent = (pct > 0 ? '↑' : '↓') + Math.abs(pct) + '% dünden' }
+            });
+        }
+
+        document.getElementById('btnSave').addEventListener('click', function () {
+            var n = document.getElementById('siteNumber').value.trim(), r = document.getElementById('refCode').value.trim();
+            if (!n) { showToast('⚠️ Numara boş!', 'error'); return } if (!r) { showToast('⚠️ Ref kodu boş!', 'error'); return }
+            var btn = document.getElementById('btnSave'); btn.disabled = true; btn.textContent = 'Kaydediliyor...';
+            S.cfg = { siteNumber: n, defaultRef: r };
+            writeJSON('data.json', S.cfg).then(function () {
+                updateDashStats(); showToast('✅ data.json kaydedildi!', 'success');
+            }).catch(function () { showToast('❌ Kayıt hatası!', 'error') }).finally(function () { btn.disabled = false; btn.innerHTML = '<span>💾</span> Kaydet & Uygula' });
+        });
+        document.getElementById('btnInc').addEventListener('click', function () {
+            var n = String(parseInt(document.getElementById('siteNumber').value || 0) + 1);
+            document.getElementById('siteNumber').value = n; updPrev();
+            S.cfg.siteNumber = n;
+            writeJSON('data.json', S.cfg).then(function () { updateDashStats(); showToast('✅ +1 artırıldı ve kaydedildi!', 'success') }).catch(function () { showToast('❌ Hata!', 'error') });
+        });
+        document.getElementById('btnTest').addEventListener('click', function () { window.open(buildUrl(document.getElementById('siteNumber').value || '481'), '_blank') });
+        document.getElementById('btnCopy').addEventListener('click', function () {
+            var url = buildUrl(S.cfg.siteNumber) + '?btag=' + S.cfg.defaultRef;
+            navigator.clipboard.writeText(url).then(function () { showToast('📋 URL kopyalandı!', 'success') }).catch(function () { var ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('📋 URL kopyalandı!', 'success') });
+        });
+
+        // ══ BTAG MANAGEMENT ════════════════════════════════════════════════════
+        function escH(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+        function genId() { return Date.now().toString(36) + Math.random().toString(36).substr(2) }
+        function getOrigin() { return window.location.origin }
+        function saveBtags(cb) { writeJSON('btag.json', S.btags).then(cb || function () { }).catch(function () { showToast('❌ btag.json kayıt hatası!', 'error') }) }
+
+        function renderBtags() {
+            var list = document.getElementById('btagList'), b1 = document.getElementById('btagBadge'), b2 = document.getElementById('btagCount');
+            if (b1) b1.textContent = S.btags.length + ' btag'; if (b2) b2.textContent = S.btags.length + ' adet';
+            if (!list) return;
+            if (S.btags.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">🏷️</div><p>Henüz btag oluşturulmadı</p></div>'; return }
+            var html = '';
+            S.btags.forEach(function (b) {
+                var url = getOrigin() + '/' + b.name;
+                html += '<div class="btag-item"><div class="btag-inner"><div class="btag-name">🏷️ ' + escH(b.name) + '</div><div class="btag-url">' + escH(url) + '</div></div>';
+                html += '<div class="btag-acts"><button class="btn-icon" onclick="bCopy(\'' + escH(b.id) + '\')" title="Kopyala">📋</button>';
+                html += '<button class="btn-icon" onclick="bTest(\'' + escH(b.id) + '\')" title="Test">🌐</button>';
+                html += '<button class="btn-icon del" onclick="bDel(\'' + escH(b.id) + '\')" title="Sil">🗑️</button></div></div>';
+            });
+            list.innerHTML = html;
+        }
+        function bById(id) { for (var i = 0; i < S.btags.length; i++)if (S.btags[i].id === id) return S.btags[i]; return null }
+        function bCopy(id) { var b = bById(id); if (!b) return; var url = getOrigin() + '/' + b.name; navigator.clipboard.writeText(url).then(function () { showToast('📋 Kopyalandı!', 'success') }).catch(function () { var ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('📋 Kopyalandı!', 'success') }) }
+        function bTest(id) { var b = bById(id); if (b) window.open(getOrigin() + '/' + b.name, '_blank') }
+        function bDel(id) { var name = ''; S.btags = S.btags.filter(function (b) { if (b.id === id) { name = b.name; return false } return true }); saveBtags(function () { renderBtags(); updateDashStats(); showToast('🗑️ Silindi: ' + name, 'success') }) }
+
+        var biEl = document.getElementById('btagInput');
+        biEl.addEventListener('input', function () { var v = this.value.trim(); document.getElementById('btagPrev').textContent = v ? getOrigin() + '/' + v : 'domain.com/BtagAdi' });
+        biEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnAddBtag').click() } });
+        document.getElementById('btnAddBtag').addEventListener('click', function () {
+            var name = biEl.value.trim();
+            if (!name) { showToast('⚠️ Btag adı boş!', 'error'); return }
+            if (!/^[a-zA-Z0-9_\-\.]+$/.test(name)) { showToast('⚠️ Sadece harf, rakam, -, _, . olabilir!', 'error'); return }
+            if (S.btags.some(function (b) { return b.name.toLowerCase() === name.toLowerCase() })) { showToast('⚠️ Bu btag zaten var!', 'error'); return }
+            S.btags.unshift({ id: genId(), name: name, created: new Date().toLocaleDateString('tr-TR') });
+            saveBtags(function () { biEl.value = ''; document.getElementById('btagPrev').textContent = 'domain.com/BtagAdi'; renderBtags(); updateDashStats(); showToast('✅ Btag oluşturuldu: ' + name, 'success') });
+        });
+
+        // ══ ANALYTICS ══════════════════════════════════════════════════════════
+        var curRange = 7, curBrange = 'all', VIS = [];
+
+        function sod(d) { d = d || new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() }
+
+        function loadAnaliz() {
+            readJSON('vis.json').then(function (vis) {
+                VIS = Array.isArray(vis) ? vis : [];
+                renderAnalizUI();
+            });
+        }
+
+        function renderAnalizUI() {
+            var vis = VIS, now2 = Date.now();
+            var ts = sod(), ys = ts - 86400000, ws = ts - 6 * 86400000, ms = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
+            var today = vis.filter(function (v) { return v.t >= ts }).length;
+            var yest = vis.filter(function (v) { return v.t >= ys && v.t < ts }).length;
+            // Compare
+            document.getElementById('cmpYest').textContent = yest;
+            document.getElementById('cmpToday').textContent = today;
+            var chip = document.getElementById('cmpChip');
+            if (yest === 0 && today === 0) { chip.textContent = 'Veri yok'; chip.className = 'pct-chip same' }
+            else if (yest === 0) { chip.textContent = '🆕 İlk giriş!'; chip.className = 'pct-chip up' }
+            else { var pct = Math.round((today - yest) / yest * 100); chip.className = 'pct-chip ' + (pct > 0 ? 'up' : pct < 0 ? 'down' : 'same'); chip.textContent = (pct >= 0 ? '+' : '') + pct + '%' }
+            // Stat cards
+            document.getElementById('aHour').textContent = vis.filter(function (v) { return v.t >= now2 - 3600000 }).length;
+            document.getElementById('aToday').textContent = today;
+            document.getElementById('aYest').textContent = yest;
+            document.getElementById('aWeek').textContent = vis.filter(function (v) { return v.t >= ws }).length;
+            document.getElementById('aMonth').textContent = vis.filter(function (v) { return v.t >= ms }).length;
+            document.getElementById('aAll').textContent = vis.length;
+            renderBarChart(curRange);
+            renderTopBtag();
+            renderBtagTable(curBrange);
+        }
+
+        function renderBarChart(days) {
+            var vis = VIS, chart = document.getElementById('barChart');
+            var data = [];
+            for (var i = days - 1; i >= 0; i--) {
+                var from = sod(new Date(Date.now() - i * 86400000));
+                var to = from + 86400000;
+                var count = vis.filter(function (v) { return v.t >= from && v.t < to }).length;
+                var d2 = new Date(from);
+                var lbl = i === 0 ? 'Bugün' : i === 1 ? 'Dün' : (d2.getDate() + '/' + (d2.getMonth() + 1));
+                data.push({ count: count, lbl: lbl });
+            }
+            var max = Math.max.apply(null, data.map(function (x) { return x.count })) || 1;
+            var grads = ['linear-gradient(180deg,#6366f1,#6366f188)', 'linear-gradient(180deg,#8b5cf6,#8b5cf688)', 'linear-gradient(180deg,#7c3aed,#7c3aed88)'];
+            var html = '';
+            data.forEach(function (item, i) {
+                var h = Math.max(3, Math.round((item.count / max) * 110));
+                html += '<div class="bar-col"><div class="bar-val">' + (item.count > 0 ? item.count : '') + '</div>';
+                html += '<div class="bar" style="height:' + h + 'px;background:' + grads[i % grads.length] + '"><div class="bar-lbl">' + item.lbl + '</div></div></div>';
+            });
+            chart.innerHTML = html || '<div class="empty-state" style="padding:20px;width:100%"><p>Henüz giriş yok</p></div>';
+        }
+
+        function renderTopBtag() {
+            var vis = VIS, btags = S.btags;
+            if (!btags.length) { document.getElementById('topName').textContent = '—'; document.getElementById('topCount').textContent = '0'; return }
+            var counts = {}; vis.forEach(function (v) { counts[v.b] = (counts[v.b] || 0) + 1 });
+            var top = btags.reduce(function (a, b) { return (counts[b.name] || 0) >= (counts[a.name] || 0) ? b : a }, btags[0]);
+            document.getElementById('topName').textContent = top ? top.name : '—';
+            document.getElementById('topCount').textContent = top ? (counts[top.name] || 0) : 0;
+        }
+
+        function renderBtagTable(range) {
+            var vis = VIS, btags = S.btags, tbl = document.getElementById('btagTable');
+            if (!btags.length) { tbl.innerHTML = '<div class="empty-state"><div class="empty-icon">🏷️</div><p>Henüz btag yok</p></div>'; return }
+            var from = 0;
+            if (range === 'today') from = sod();
+            else if (range === 'week') from = sod() - 6 * 86400000;
+            else if (range === 'month') from = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
+            var filtered = from ? vis.filter(function (v) { return v.t >= from }) : vis;
+            var counts = {}; filtered.forEach(function (v) { counts[v.b] = (counts[v.b] || 0) + 1 });
+            var items = btags.map(function (b) { return { name: b.name, count: counts[b.name] || 0 } });
+            items.sort(function (a, b) { return b.count - a.count });
+            var maxC = items[0] ? items[0].count : 1, totalC = items.reduce(function (s, x) { return s + x.count }, 0);
+            var html = '';
+            items.forEach(function (item, i) {
+                var pct = totalC > 0 ? Math.round(item.count / totalC * 100) : 0;
+                var barW = maxC > 0 ? Math.round(item.count / maxC * 100) : 0;
+                var grad = i === 0 ? 'linear-gradient(90deg,#f59e0b,#f97316)' : 'linear-gradient(90deg,#6366f1,#818cf8)';
+                html += '<div class="btag-row"><div class="btag-row-name">' + escH(item.name) + (i === 0 && item.count > 0 ? '<span class="top-badge">🏆</span>' : '') + '</div>';
+                html += '<div class="btag-mini-bar"><div class="btag-mini-fill" style="width:' + barW + '%;background:' + grad + '"></div></div>';
+                html += '<div class="btag-row-count">' + item.count + '</div><div class="btag-row-pct">' + pct + '%</div></div>';
+            });
+            tbl.innerHTML = html;
+        }
+
+        // Chart tabs
+        document.getElementById('chartTabs').addEventListener('click', function (e) {
+            var tab = e.target.closest('.tab'); if (!tab) return;
+            document.querySelectorAll('#chartTabs .tab').forEach(function (t) { t.classList.remove('active') });
+            tab.classList.add('active'); curRange = parseInt(tab.getAttribute('data-range')); renderBarChart(curRange);
+        });
+        document.getElementById('btagTabs').addEventListener('click', function (e) {
+            var tab = e.target.closest('.tab'); if (!tab) return;
+            document.querySelectorAll('#btagTabs .tab').forEach(function (t) { t.classList.remove('active') });
+            tab.classList.add('active'); curBrange = tab.getAttribute('data-brange'); renderBtagTable(curBrange);
+        });
+
+        // ══ TOAST ══════════════════════════════════════════════════════════════
+        var _tt = null;
+        function showToast(msg, type) { var t = document.getElementById('toast'); document.getElementById('toastTxt').textContent = msg; t.className = 'toast ' + (type || 'success'); t.classList.add('show'); if (_tt) clearTimeout(_tt); _tt = setTimeout(function () { t.classList.remove('show') }, 3200) }
+    </script>
+</body>
+
+</html>

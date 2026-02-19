@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /
+
+# Var olan dosya veya klasörlere dokunma
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Her şeyi index.html'e gönder
+RewriteRule ^ index.html [L,QSA]
